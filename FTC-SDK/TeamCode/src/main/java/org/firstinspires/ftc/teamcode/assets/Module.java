@@ -1,18 +1,20 @@
 package org.firstinspires.ftc.teamcode.assets;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class Module {
 
     private final Swervo s;
     private final DcMotorEx m;
     private final PIDC pid;
-    public double p = 0.05;
-    public double i = 0.0001;
-    public double d = 0.001;
+    public static double p = 1;
+    public static double i = 0.0001;
+    public static double d = 0.001;
 
     private double mNwb;
     private double mNtw;
@@ -20,6 +22,7 @@ public class Module {
     private double y;
     private double tA;
     private double tV;
+    private double solvedTarget;
 
     public Module(HardwareMap hardwareMap, String mn, String en, String sn){
         m = hardwareMap.get(DcMotorEx.class, mn);
@@ -31,14 +34,24 @@ public class Module {
         m.setPower(power);
     }
 
+    public void setServoPower(double power){
+        s.setPower(power);
+    }
+
     public double getEncPosition(){
         return s.getPosition();
     }
 
-    public void setServoTarget(double targ){
-        pid.setTarg(targ);
-        s.setPower(pid.calculate(getEncPosition()));
+    public double getPIDCalc(){
+        return pid.calculate(getEncPosition());
     }
+
+    public void setServoTarget(double targ){
+        solvedTarget = targ;
+        pid.setTarg(solvedTarget);
+        s.setPower(getPIDCalc());
+    }
+
 
     public void setValues(double ta, double tv){
         setServoTarget(ta);

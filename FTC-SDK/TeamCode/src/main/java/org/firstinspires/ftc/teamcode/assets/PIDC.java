@@ -19,16 +19,16 @@ public class PIDC {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.setPoint = 0.0;
-        this.integral = 0.0;
-        this.previousError = 0.0;
+        setPoint = 0.0;
+        integral = 0.0;
+        previousError = 0.0;
         timer = new ElapsedTime();
         this.lastTimeMS = timer.milliseconds();
 
     }
 
     public void setTarg(double targ) {
-        this.setPoint = targ;
+        setPoint = targ;
     }
 
     public void reset() {
@@ -39,7 +39,7 @@ public class PIDC {
 
     public double calculate(double measuredValue) {
         double now = timer.milliseconds();
-        double dt = (now - lastTimeMS);
+        double dt = (now - lastTimeMS)/ 1.0e9;
 
         double error = setPoint - measuredValue;
         integral += error * dt;
@@ -49,6 +49,7 @@ public class PIDC {
 
         previousError = error;
         lastTimeMS = now;
+        timer.reset();
 
         return output;
     }

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.assets;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+@TeleOp(name = "FullOpMode")
 public class FullOpMode extends OpMode {
 
     Drivetrain d;
