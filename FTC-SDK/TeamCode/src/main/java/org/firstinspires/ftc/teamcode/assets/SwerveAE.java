@@ -9,7 +9,7 @@ public class SwerveAE {
     private final double radianMultiplier = 1.90399554763;
     public double analogRange = 3.3;
     public boolean inverted;
-    
+
 
     public SwerveAE(AnalogInput encInput){
         encoder = encInput;
