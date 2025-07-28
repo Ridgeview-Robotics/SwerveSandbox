@@ -15,7 +15,7 @@ import java.util.List;
  * - Optimized servo update rates
  * - Memory management techniques
  * - Loop time monitoring and optimization
- */ 
+ */
 public class PerformanceOptimizations {
     
     private List<LynxModule> allHubs;

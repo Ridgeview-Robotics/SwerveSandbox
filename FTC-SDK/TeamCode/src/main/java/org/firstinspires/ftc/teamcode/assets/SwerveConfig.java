@@ -11,15 +11,20 @@ public class SwerveConfig {
     public static double DRIVE_MAX_VEL = 50.0; // inches per second
     public static double DRIVE_MAX_ACCEL = 30.0; // inches per second squared
     
-    // Servo Configuration
-    public static double SERVO_MIN_ANGLE = 0.0; // degrees
-    public static double SERVO_MAX_ANGLE = 360.0; // degrees
-    public static double SERVO_DEGREES_PER_PULSE = 0.18; // AXON Max spec
+    // Continuous Servo Configuration
+    public static double SERVO_STOP_POWER = 0.5; // Power value that stops the servo
+    public static double SERVO_MAX_POWER = 1.0; // Maximum servo power
+    public static double SERVO_MIN_POWER = 0.0; // Minimum servo power
     
-    // PID Coefficients for Swerve Module Rotation
-    public static double SWERVE_kP = 0.8;
+    // Analog Encoder Configuration (0-3.3V = 0-2π radians)
+    public static double ENCODER_MAX_VOLTAGE = 3.3; // Maximum voltage from analog input
+    public static double ENCODER_MIN_VOLTAGE = 0.0; // Minimum voltage from analog input
+    public static double VOLTAGE_TO_RADIANS = (2.0 * Math.PI) / ENCODER_MAX_VOLTAGE;
+    
+    // PID Coefficients for Swerve Module Rotation (output is servo power)
+    public static double SWERVE_kP = 0.5; // Higher P for continuous servo control
     public static double SWERVE_kI = 0.0;
-    public static double SWERVE_kD = 0.1;
+    public static double SWERVE_kD = 0.2;
     public static double SWERVE_kF = 0.0;
     
     // Angular PID for robot rotation
@@ -34,9 +39,16 @@ public class SwerveConfig {
     // Maximum angular velocity (rad/s)
     public static double MAX_ANG_VEL = Math.PI; // 180 degrees per second
     
-    // Servo optimization settings
-    public static double SERVO_TOLERANCE = 2.0; // degrees
+    // Continuous Servo optimization settings
+    public static double SERVO_DEADBAND = 0.02; // Deadband around stop power (0.5)
+    public static double SERVO_TOLERANCE = 0.05; // radians (about 3 degrees)
     public static double SERVO_SETTLE_TIME = 0.1; // seconds
+    
+    // Encoder offset calibration values (radians)
+    public static double FL_ENCODER_OFFSET = 0.0;
+    public static double FR_ENCODER_OFFSET = 0.0;
+    public static double BL_ENCODER_OFFSET = 0.0;
+    public static double BR_ENCODER_OFFSET = 0.0;
     
     // Performance optimization
     public static boolean USE_BULK_READS = true;
@@ -55,11 +67,11 @@ public class SwerveConfig {
     public static double MAX_DRIVE_POWER = 1.0;
     public static double MAX_TURN_POWER = 0.8;
     
-    // Encoder configuration
-    public static double ENCODER_TICKS_PER_REV = 8192.0; // Adjust for your encoder
+    // Drive motor encoder configuration
+    public static double ENCODER_TICKS_PER_REV = 537.7; // GoBilda 5203/5204 motors
     public static boolean REVERSE_ENCODER = false;
     
-    // Auto-alignment settings
-    public static double AUTO_ALIGN_TOLERANCE = 1.0; // degrees
-    public static double AUTO_ALIGN_MAX_POWER = 0.3;
+    // Wheel alignment settings
+    public static boolean AUTO_ALIGN_ON_INIT = true; // Straighten wheels on initialization
+    public static double AUTO_ALIGN_TIMEOUT = 3.0; // seconds to wait for alignment
 }

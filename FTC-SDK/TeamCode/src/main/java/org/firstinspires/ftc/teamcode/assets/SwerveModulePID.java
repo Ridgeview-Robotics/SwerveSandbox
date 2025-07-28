@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Lightweight PID controller optimized for swerve module steering
- * Handles angle wrapping and minimizes computation overhead
+ * Handles angle wrapping and outputs servo power adjustments
+ * Output range is designed for continuous servo control
  */
 public class SwerveModulePID {
     
@@ -13,9 +14,11 @@ public class SwerveModulePID {
     private double integral = 0.0;
     private ElapsedTime timer = new ElapsedTime();
     
-    // Integral windup prevention
-    private final double integralMax = 0.5;
-    private final double integralMin = -0.5;
+    // Integral windup prevention and output limits
+    private final double integralMax = 0.3;
+    private final double integralMin = -0.3;
+    private final double outputMax = 0.4; // Maximum servo power adjustment from 0.5
+    private final double outputMin = -0.4; // Minimum servo power adjustment from 0.5
     
     public SwerveModulePID(double kP, double kI, double kD) {
         this.kP = kP;
@@ -26,15 +29,15 @@ public class SwerveModulePID {
     
     /**
      * Calculate PID output for angle control
-     * @param setpoint Target angle (degrees)
-     * @param measurement Current angle (degrees)
-     * @return PID output
+     * @param setpoint Target angle (radians)
+     * @param measurement Current angle (radians)
+     * @return PID output (servo power adjustment from 0.5)
      */
     public double calculate(double setpoint, double measurement) {
         double deltaTime = timer.seconds();
         timer.reset();
         
-        // Calculate error with angle wrapping
+        // Calculate error with angle wrapping (radians)
         double error = angleError(setpoint, measurement);
         
         // Proportional term
@@ -53,19 +56,21 @@ public class SwerveModulePID {
         
         previousError = error;
         
-        return proportional + integralTerm + derivative;
+        // Calculate total output and clamp to servo power range
+        double output = proportional + integralTerm + derivative;
+        return Math.max(outputMin, Math.min(outputMax, output));
     }
     
     /**
-     * Calculate angle error with proper wrapping
-     * Returns error in range [-180, 180]
+     * Calculate angle error with proper wrapping for radians
+     * Returns error in range [-π, π]
      */
     private double angleError(double setpoint, double measurement) {
         double error = setpoint - measurement;
         
-        // Wrap error to [-180, 180] range
-        while (error > 180) error -= 360;
-        while (error < -180) error += 360;
+        // Wrap error to [-π, π] range
+        while (error > Math.PI) error -= 2 * Math.PI;
+        while (error < -Math.PI) error += 2 * Math.PI;
         
         return error;
     }
