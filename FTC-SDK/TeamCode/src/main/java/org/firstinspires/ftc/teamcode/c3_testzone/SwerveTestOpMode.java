@@ -1,14 +1,10 @@
-package org.firstinspires.ftc.teamcode.assets;
+package org.firstinspires.ftc.teamcode.c3_testzone;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.assets.SwerveDrivetrain;
-import org.firstinspires.ftc.teamcode.assets.SwerveModule;
-import org.firstinspires.ftc.teamcode.assets.SwerveConfig;
 
 @TeleOp(name="Swerve Test & Calibration FIXED", group="Swerve")
 public class SwerveTestOpMode extends OpMode {
@@ -43,9 +39,17 @@ public class SwerveTestOpMode extends OpMode {
     @Override
     public void init() {
         drivetrain = new SwerveDrivetrain(hardwareMap);
+        
+        // Force dashboard initialization
         dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25); // 40Hz update rate
+        
+        // Clear any existing packets
+        TelemetryPacket packet = new TelemetryPacket();
+        dashboard.sendTelemetryPacket(packet);
+        
         runtime.reset();
-
+        
         telemetry.addData("Status", "Initialized - Swerve Test Mode FIXED");
         telemetry.addData("Instructions", "Y = Test Mode, X = Exit Test Mode");
         telemetry.addData("Selected Module", moduleNames[selectedModule]);
@@ -118,14 +122,21 @@ public class SwerveTestOpMode extends OpMode {
      */
     private void runTestMode() {
         SwerveModule module = getSelectedModule();
-
-        // Angle control with right stick X - FIXED TO USE RADIANS
+    
+        // Reduce angle control sensitivity and add deadzone
         double angleInput = gamepad1.right_stick_x;
-        if (Math.abs(angleInput) > 0.1) {
-            // Convert to radians: -1 to 1 input becomes 0 to 2π radians
-            double targetAngle = (angleInput + 1.0) * Math.PI; // 0 to 2π radians
-            module.setTargetAngle(targetAngle);
+        if (Math.abs(angleInput) > 0.15) { // Increased deadzone
+            double targetAngle = (angleInput + 1.0) * Math.PI;
+            // Add smoothing to prevent sudden movements
+            double currentAngle = module.getCurrentAngle();
+            double smoothedAngle = currentAngle + Math.signum(targetAngle - currentAngle) * 0.1;
+            module.setTargetAngle(smoothedAngle);
         }
+    
+        // Reduce drive speed even further for testing
+        double driveSpeed = -gamepad1.left_stick_y * 0.3; // Reduced from 0.5 to 0.3
+        module.setDriveSpeed(driveSpeed);
+
 
         // Preset angles with dpad - NOW USING RADIANS
         if (gamepad1.dpad_up) {
@@ -138,7 +149,7 @@ public class SwerveTestOpMode extends OpMode {
         }
 
         // Drive speed control with left stick Y
-        double driveSpeed = -gamepad1.left_stick_y * 0.5; // Limited speed for testing
+        driveSpeed = -gamepad1.left_stick_y * 0.5; // Limited speed for testing
         module.setDriveSpeed(driveSpeed);
 
         // Update the module

@@ -1,13 +1,10 @@
-package org.firstinspires.ftc.teamcode.assets;
+package org.firstinspires.ftc.teamcode.c3_testzone;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.assets.SwerveDrivetrain;
-import org.firstinspires.ftc.teamcode.assets.SwerveConfig;
 
 @TeleOp(name="Swerve Drive TeleOp", group="Swerve")
 public class SwerveTeleOp extends OpMode {
